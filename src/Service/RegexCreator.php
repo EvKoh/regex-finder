@@ -59,8 +59,11 @@ class RegexCreator
         $twigSufix .= '(:\[' . $twigAnyCharacter . '\])*'; # parameters
         $twigSufix .= '(:\'[a-zA-Z]{0,20}\')*'; # domain
 
+        $twigOpen = '(\[\%|\{\{)';
+        $twigClose = '(\}\}|\%\])';
+
         self::$regex['translate'][] = [
-            'regexContent' => '/\[\%' . self::$recipes['string'] . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . '\%\]/im',
+            'regexContent' => '/' . $twigOpen . self::$recipes['string'] . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose . '/im',
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
 
@@ -102,8 +105,11 @@ class RegexCreator
         $twigConcatRight = '(' . $twigConcat . $twigAnyCharacter . ')';
         $twigConcatLeftAndRight = '((' . $twigConcatLeft . self::$recipes['string'] . ')|(' . self::$recipes['string'] . $twigConcatRight . '))';
 
+        $twigOpen = '(\[\%|\{\{)';
+        $twigClose = '(\}\}|\%\])';
+
         self::$regex['translateConcat'][] = [
-            'regexContent' => '/\[\%' . $twigConcatLeftAndRight . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . '\%\]/im',
+            'regexContent' => '/' . $twigOpen . $twigConcatLeftAndRight . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose . '/im',
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
 
