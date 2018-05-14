@@ -44,7 +44,7 @@ class RegexCreator
         $notAllowedJs .= '(?!\))';
         $jsAnyCharacter = '((' . $notAllowedJs . '.)*)';
 
-        $jsSufixe = '(,' . $jsAnyCharacter . ')*';
+        $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
 
         self::$regex['translate'][] = [
             'regexContent' => '/Translator\.trans\(' . self::$recipes['string'] . $jsSufixe . '\)/im',
@@ -82,7 +82,7 @@ class RegexCreator
         $jsConcatRight = '(' . $jsConcat . $jsAnyCharacter . ')';
         $jsConcatLeftAndRight = '((' . $jsConcatLeft . self::$recipes['string'] . ')|(' . self::$recipes['string'] . $jsConcatRight . '))';
 
-        $jsSufixe = '(,' . $jsAnyCharacter . ')*';
+        $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
 
         self::$regex['translateConcat'][] = [
             'regexContent' => '/Translator\.trans\(' . $jsConcatLeftAndRight . $jsSufixe . '\)/im',
