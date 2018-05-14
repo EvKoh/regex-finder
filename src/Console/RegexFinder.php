@@ -21,7 +21,9 @@ final class RegexFinder extends AbstractCommand
             ->setDescription('Finder')
             ->setHelp('Finder...')
             ->addArgument('group', InputArgument::REQUIRED, 'The group for regex, example : "translate".')
-            ->addArgument('searchPath', InputArgument::REQUIRED, 'The path where search...');
+            ->addArgument('searchPath', InputArgument::REQUIRED, 'The path where search...')
+            ->addArgument('begin', InputArgument::OPTIONAL, 'Begin with...')
+            ->addArgument('end', InputArgument::OPTIONAL, 'End with...');
     }
 
     /**
@@ -32,7 +34,10 @@ final class RegexFinder extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         //$this->clear();
-        foreach ($this->regexCreator->getByGroup($input->getArgument('group')) as $regexElements) {
+        foreach ($this->regexCreator->getByGroup($input->getArgument('group'), [
+            (string)$input->getArgument('begin'),
+            (string)$input->getArgument('end'),
+        ]) as $regexElements) {
             $this->resetFinder();
             $this->finder->files()
                 ->in($input->getArgument('searchPath'))

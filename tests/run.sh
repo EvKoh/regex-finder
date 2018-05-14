@@ -7,3 +7,15 @@ php bin/console app:finder "translate" "${searchPath}"
 echo -e "\n";
 
 php bin/console app:finder "translateConcat" "${searchPath}"
+
+echo -e "\n";
+
+php bin/console app:finder "translate" "${searchPath}" "begin" ""
+
+echo -e "\n";
+
+php bin/console app:finder "translate" "${searchPath}" "" "end"
+
+echo -e "\n";
+
+php bin/console app:finder "translate" "${searchPath}" "begin" "end"

@@ -28,10 +28,12 @@ class RegexCreator
 
     /**
      * @param string $groupName
+     * @param array $parameters
      * @return array
      */
-    public function getByGroup(string $groupName): array
+    public function getByGroup(string $groupName, array $parameters = []): array
     {
+        call_user_func_array([$this, 'createRecipes'], $parameters);
         return call_user_func_array([$this, 'createRegex' . ucfirst($groupName)], []);
     }
 
@@ -120,12 +122,27 @@ class RegexCreator
 
 
     /**
-     *
+     * @param string|null $begin
+     * @param string|null $end
      */
-    private static function createRecipes()
+    private static function createRecipes(string $begin = null, string $end = null)
     {
         self::$recipes['space'] = "\s*";
-        self::$recipes['string'] = self::$recipes['space'] . "('|\")" . "(.*)" . "('|\")" . self::$recipes['space'];
+
+        if (null !== $begin && null === $end) {
+            $begin = preg_quote($begin);
+            $string = '(' . $begin . '(.*))';
+        } elseif (null === $begin && null !== $end) {
+            $begin = preg_quote($begin);
+            $string = '((.*)' . $end . ')';
+        } elseif (null !== $begin && null !== $end) {
+            $begin = preg_quote($begin);
+            $string = '(' . $begin . '(.*)' . $end . ')';
+        } else {
+            $string = '(.*)';
+        }
+
+        self::$recipes['string'] = self::$recipes['space'] . "('|\")" . $string . "('|\")" . self::$recipes['space'];
     }
 
     /**
