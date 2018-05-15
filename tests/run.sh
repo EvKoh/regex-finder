@@ -19,3 +19,7 @@ php bin/console app:finder "translate" "${searchPath}" "" "end"
 echo -e "\n";
 
 php bin/console app:finder "translate" "${searchPath}" "begin" "end"
+
+echo -e "\n";
+
+php bin/console app:finder "translate" "${searchPath}" "egi" # simple contains

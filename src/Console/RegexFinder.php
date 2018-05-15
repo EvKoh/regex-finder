@@ -35,12 +35,19 @@ final class RegexFinder extends AbstractCommand
     {
         //$this->clear();
         foreach ($this->regexCreator->getByGroup($input->getArgument('group'), [
-            (string)$input->getArgument('begin'),
-            (string)$input->getArgument('end'),
+            $input->getArgument('begin'),
+            $input->getArgument('end'),
         ]) as $regexElements) {
             $this->resetFinder();
             $this->finder->files()
                 ->in($input->getArgument('searchPath'))
+                ->exclude('docker')
+                ->exclude('.idea')
+                ->exclude('vendor')
+                ->exclude('var')
+                ->exclude('node_modules')
+                ->exclude('deployment')
+                ->exclude('app')
                 ->name($regexElements['regexFileName'])
                 ->contains('/'.$regexElements['regexContent'].'/im');
 

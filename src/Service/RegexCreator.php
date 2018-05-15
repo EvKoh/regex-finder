@@ -163,23 +163,26 @@ class RegexCreator
 
 
     /**
-     * @param string|null $begin
-     * @param string|null $end
+     * @param $begin
+     * @param $end
      */
-    private static function createRecipes(string $begin = null, string $end = null)
+    private static function createRecipes($begin = null, $end = null)
     {
         self::$recipes['space'] = "\s*";
 
-        if (null !== $begin && null === $end) {
+        if ((null !== $begin && '' === $begin) && null === $end) {
             $begin = preg_quote($begin);
             $string = '(' . $begin . '(.*))';
-        } elseif (null === $begin && null !== $end) {
+        } elseif (null === $begin && (null !== $end && '' === $end)) {
             $end = preg_quote($end);
             $string = '((.*)' . $end . ')';
         } elseif (null !== $begin && null !== $end) {
             $begin = preg_quote($begin);
             $end = preg_quote($end);
             $string = '(' . $begin . '(.*)' . $end . ')';
+        } elseif ((null !== $begin && '' !== $begin) && (null === $end && '' === $end)) { # contains
+            $begin = preg_quote($begin);
+            $string = '((.*)' . $begin . '(.*))';
         } else {
             $string = '(.*)';
         }
