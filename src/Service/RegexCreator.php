@@ -49,9 +49,18 @@ class RegexCreator
         $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
 
         self::$regex['translate'][] = [
-            'regexContent' => '/Translator\.trans\(' . self::$recipes['string'] . $jsSufixe . '\)/im',
+            'regexContent' => 'Translator\.trans\(' . self::$recipes['string'] . $jsSufixe . '\)',
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
+
+        self::details(
+            'Simple in js',
+            self::$regex['translate'][0],
+            "Translator.trans('begin some string');\n" .
+            "Translator.trans('some string end');\n" .
+            "Translator.trans('begin some string end');\n" .
+            "Translator.trans('some string end', [], var);\n"
+        );
 
         $notAllowedTwig = '(?!\[)';
         $notAllowedTwig .= '(?!\])';
@@ -65,13 +74,31 @@ class RegexCreator
         $twigClose = '(\}\}|\%\])';
 
         self::$regex['translate'][] = [
-            'regexContent' => '/' . $twigOpen . self::$recipes['string'] . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose . '/im',
+            'regexContent' => $twigOpen . self::$recipes['string'] . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose,
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
 
-        var_dump(self::$regex['translate']);
+        self::details(
+            'Simple in twig',
+            self::$regex['translate'][1],
+            "[% 'begin some string'|trans %]\n" .
+            "[% 'some string end'|trans %]\n" .
+            "[% 'begin some string end'|trans %]\n"
+        );
 
         return self::$regex['translate'];
+    }
+
+    /**
+     * @param string $title
+     * @param array $regex
+     * @param string $testString
+     */
+    private static function details(string $title, array $regex, string $testString = '')
+    {
+        echo "regex (" . (strlen($regex['regexContent']) + 3) . "): /" . $regex['regexContent'] . "/im\n";
+        echo "file mask : " . $regex['regexFileName'] . "\n";
+        echo $title . " : https://regex101.com/?regex=" . urlencode($regex['regexContent']) . "&testString=" . urlencode($testString) . "&flags=img&delimiter=" . urlencode('/') . "\n\n";
     }
 
     /**
@@ -90,9 +117,17 @@ class RegexCreator
         $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
 
         self::$regex['translateConcat'][] = [
-            'regexContent' => '/Translator\.trans\(' . $jsConcatLeftAndRight . $jsSufixe . '\)/im',
+            'regexContent' => 'Translator\.trans\(' . $jsConcatLeftAndRight . $jsSufixe . '\)',
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
+
+        self::details(
+            'Contact in js',
+            self::$regex['translateConcat'][0],
+            "Translator.trans('some string' + \"some string\");\n" .
+            "Translator.trans('some string' + var);\n" .
+            "Translator.trans(var + 'some string');\n"
+        );
 
         $notAllowedTwig = '(?!\[)';
         $notAllowedTwig .= '(?!\])';
@@ -111,11 +146,17 @@ class RegexCreator
         $twigClose = '(\}\}|\%\])';
 
         self::$regex['translateConcat'][] = [
-            'regexContent' => '/' . $twigOpen . $twigConcatLeftAndRight . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose . '/im',
+            'regexContent' => $twigOpen . $twigConcatLeftAndRight . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose,
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
 
-        var_dump(self::$regex['translateConcat']);
+        self::details(
+            'Concat in twig',
+            self::$regex['translateConcat'][1],
+            "[% 'some string' ~ \"some string\"|trans %]\n" .
+            "[% 'some string' ~ var|trans %]\n" .
+            "[% var ~ 'some string'|trans %]\n"
+        );
 
         return self::$regex['translateConcat'];
     }
@@ -133,10 +174,11 @@ class RegexCreator
             $begin = preg_quote($begin);
             $string = '(' . $begin . '(.*))';
         } elseif (null === $begin && null !== $end) {
-            $begin = preg_quote($begin);
+            $end = preg_quote($end);
             $string = '((.*)' . $end . ')';
         } elseif (null !== $begin && null !== $end) {
             $begin = preg_quote($begin);
+            $end = preg_quote($end);
             $string = '(' . $begin . '(.*)' . $end . ')';
         } else {
             $string = '(.*)';

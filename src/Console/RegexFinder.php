@@ -42,7 +42,7 @@ final class RegexFinder extends AbstractCommand
             $this->finder->files()
                 ->in($input->getArgument('searchPath'))
                 ->name($regexElements['regexFileName'])
-                ->contains($regexElements['regexContent']);
+                ->contains('/'.$regexElements['regexContent'].'/im');
 
             foreach ($this->finder as $file) {
                 var_dump($file->getRealPath());
