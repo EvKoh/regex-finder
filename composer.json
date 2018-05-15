@@ -1,4 +1,6 @@
 {
+    "name": "evkoh/regex-finder",
+    "description": "Build and Find with complex regex in any project",
     "type": "project",
     "license": "proprietary",
     "require": {
