@@ -50,7 +50,7 @@ class RegexCreator
 
         self::$regex['translate'][] = [
             'regexContent' => 'Translator\.trans\(' . self::$recipes['string'] . $jsSufixe . '\)',
-            'regexFileName' => self::createRegexExtensions(['js', 'twig'])
+            'regexFileName' => self::createRegexExtensions(['js'])
         ];
 
         self::details(
@@ -118,7 +118,7 @@ class RegexCreator
 
         self::$regex['translateConcat'][] = [
             'regexContent' => 'Translator\.trans\(' . $jsConcatLeftAndRight . $jsSufixe . '\)',
-            'regexFileName' => self::createRegexExtensions(['js', 'twig'])
+            'regexFileName' => self::createRegexExtensions(['js'])
         ];
 
         self::details(
@@ -168,6 +168,8 @@ class RegexCreator
      */
     private static function createRecipes($begin = null, $end = null)
     {
+        //var_dump($begin);var_dump($end);
+
         self::$recipes['space'] = "\s*";
 
         if ((null !== $begin && '' === $begin) && null === $end) {
@@ -180,7 +182,7 @@ class RegexCreator
             $begin = preg_quote($begin);
             $end = preg_quote($end);
             $string = '(' . $begin . '(.*)' . $end . ')';
-        } elseif ((null !== $begin && '' !== $begin) && (null === $end && '' === $end)) { # contains
+        } elseif ((null !== $begin && '' !== $begin) && null === $end) { # contains
             $begin = preg_quote($begin);
             $string = '((.*)' . $begin . '(.*))';
         } else {
