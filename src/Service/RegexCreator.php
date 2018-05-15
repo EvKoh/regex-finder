@@ -42,26 +42,70 @@ class RegexCreator
      */
     private static function createRegexTranslate(): array
     {
+        self::simpleJsV1();
+        self::simpleJsV2();
+        self::simpleTwig();
+
+        return self::$regex['translate'];
+    }
+
+    /**
+     *
+     */
+    private static function simpleJsV1()
+    {
         $notAllowedJs = '(?!\()';
         $notAllowedJs .= '(?!\))';
         $jsAnyCharacter = '((' . $notAllowedJs . '.)*)';
 
         $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
 
-        self::$regex['translate'][] = [
+        self::$regex['translate'][__METHOD__] = [
             'regexContent' => 'Translator\.trans\(' . self::$recipes['string'] . $jsSufixe . '\)',
             'regexFileName' => self::createRegexExtensions(['js'])
         ];
 
         self::details(
             'Simple in js',
-            self::$regex['translate'][0],
+            self::$regex['translate'][__METHOD__],
             "Translator.trans('begin some string');\n" .
             "Translator.trans('some string end');\n" .
             "Translator.trans('begin some string end');\n" .
             "Translator.trans('some string end', [], var);\n"
         );
+    }
 
+    /**
+     *
+     */
+    private static function simpleJsV2()
+    {
+        $notAllowedJs = '(?!\()';
+        $notAllowedJs .= '(?!\))';
+        $jsAnyCharacter = '((' . $notAllowedJs . '.)*)';
+
+        $jsSufixe = '(' . self::$recipes['space'] . ',' . $jsAnyCharacter . ')*';
+
+        self::$regex['translate'][__METHOD__] = [
+            'regexContent' => '\$filter\(\'trans\'\)\(' . self::$recipes['string'] . $jsSufixe . '\)',
+            'regexFileName' => self::createRegexExtensions(['js'])
+        ];
+
+        self::details(
+            'Simple in js',
+            self::$regex['translate'][__METHOD__],
+            "\$filter('trans')('begin some string');\n" .
+            "\$filter('trans')('some string end');\n" .
+            "\$filter('trans')('begin some string end');\n" .
+            "\$filter('trans')('some string end', [], var);\n"
+        );
+    }
+
+    /**
+     *
+     */
+    private static function simpleTwig()
+    {
         $notAllowedTwig = '(?!\[)';
         $notAllowedTwig .= '(?!\])';
         $twigAnyCharacter = '((' . $notAllowedTwig . '.)*)';
@@ -73,20 +117,18 @@ class RegexCreator
         $twigOpen = '(\[\%|\{\{)';
         $twigClose = '(\}\}|\%\])';
 
-        self::$regex['translate'][] = [
+        self::$regex['translate'][__METHOD__] = [
             'regexContent' => $twigOpen . self::$recipes['string'] . '\|' . self::$recipes['space'] . 'trans' . $twigSufix . self::$recipes['space'] . $twigClose,
             'regexFileName' => self::createRegexExtensions(['js', 'twig'])
         ];
 
         self::details(
             'Simple in twig',
-            self::$regex['translate'][1],
+            self::$regex['translate'][__METHOD__],
             "[% 'begin some string'|trans %]\n" .
             "[% 'some string end'|trans %]\n" .
             "[% 'begin some string end'|trans %]\n"
         );
-
-        return self::$regex['translate'];
     }
 
     /**
