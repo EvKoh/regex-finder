@@ -34,6 +34,7 @@ final class RegexFinder extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         //$this->clear();
+        $ideRegexs = [];
         foreach ($this->regexCreator->getByGroup($input->getArgument('group'), [
             $input->getArgument('begin'),
             $input->getArgument('end'),
@@ -50,10 +51,12 @@ final class RegexFinder extends AbstractCommand
                 ->exclude('app')
                 ->name($regexElements['regexFileName'])
                 ->contains('/'.$regexElements['regexContent'].'/im');
-
+            $ideRegexs[] = $regexElements['regexContent'];
             foreach ($this->finder as $file) {
                 var_dump($file->getRealPath());
             }
         }
+
+        echo "\n".'('.implode(')|(',$ideRegexs).')'."\n";
     }
 }
