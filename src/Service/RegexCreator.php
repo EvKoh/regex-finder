@@ -106,6 +106,8 @@ class RegexCreator
      */
     private static function simpleTwig()
     {
+        //       \[%\s*((?:(?!%\]).)*)\s*\|\s*trans\s*(?:\|\s*\w+(?::[^:]+)*)*\s*%\]
+
         $notAllowedTwig = '(?!\[)';
         $notAllowedTwig .= '(?!\])';
         $twigAnyCharacter = '((' . $notAllowedTwig . '.)*)';
@@ -215,17 +217,17 @@ class RegexCreator
         self::$recipes['space'] = "\s*";
 
         if ((null !== $begin && '' === $begin) && null === $end) {
-            $begin = preg_quote($begin);
+            $begin = preg_quote($begin, '/');
             $string = '(' . $begin . '(.*))';
         } elseif (null === $begin && (null !== $end && '' === $end)) {
-            $end = preg_quote($end);
+            $end = preg_quote($end, '/');
             $string = '((.*)' . $end . ')';
         } elseif (null !== $begin && null !== $end) {
-            $begin = preg_quote($begin);
-            $end = preg_quote($end);
+            $begin = preg_quote($begin, '/');
+            $end = preg_quote($end, '/');
             $string = '(' . $begin . '(.*)' . $end . ')';
         } elseif ((null !== $begin && '' !== $begin) && null === $end) { # contains
-            $begin = preg_quote($begin);
+            $begin = preg_quote($begin, '/');
             $string = '((.*)' . $begin . '(.*))';
         } else {
             $string = '(.*)';
